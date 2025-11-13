@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard | Backup System</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --secondary: #facc15;
+      --accent: #2563eb;
+      --background: #f3f4f6;
+      --white: #ffffff;
+      --text-dark: #1f2937;
+      --text-light: #6b7280;
+      --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    [data-theme="dark"] {
+      --background: #0f172a;
+      --white: #1e293b;
+      --text-dark: #f8fafc;
+      --text-light: #cbd5e1;
+      --card-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--background);
+      color: var(--text-dark);
+      display: flex;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== SIDEBAR ===== */
+    aside {
+      width: 250px;
+      background: var(--primary);
+      color: var(--white);
+      display: flex;
+      flex-direction: column;
+      padding: 25px 15px;
+      position: fixed;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+      transition: width 0.3s ease;
+      z-index: 10;
+    }
+
+    aside h1 {
+      font-size: 22px;
+      margin-bottom: 35px;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .sidebar-nav button {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: transparent;
+      border: none;
+      color: var(--white);
+      text-align: left;
+      padding: 12px 15px;
+      margin: 5px 0;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.25s ease;
+    }
+
+    .sidebar-nav button:hover,
+    .sidebar-nav button.active {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(3px);
+    }
+
+    #logoutBtn {
+      background: var(--secondary);
+      color: var(--primary);
+      font-weight: bold;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 6px;
+      margin-top: auto;
+      cursor: pointer;
+      width: 100%;
+      transition: 0.25s;
+    }
+
+    #logoutBtn:hover {
+      background: #fde047;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    main {
+      margin-left: 260px;
+      padding: 30px;
+      flex: 1;
+      transition: margin-left 0.3s ease;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    header h2 {
+      font-size: 22px;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    [data-theme="dark"] header h2 {
+      color: #facc15;
+    }
+
+    .admin-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--white);
+      padding: 8px 15px;
+      border-radius: 50px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .admin-info span {
+      font-weight: 600;
+      color: var(--text-dark);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ===== SEARCH BAR ===== */
+    .search-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .search-bar input {
+      width: 250px;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    /* ===== TABLE STYLE ===== */
+    .card {
+      background: var(--white);
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+      padding: 20px;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 15px;
+    }
+
+    th, td {
+      padding: 12px 10px;
+      text-align: left;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    th {
+      background: var(--secondary);
+      color: #1e293b;
+      font-weight: 600;
+    }
+
+    tr:hover {
+      background: #f9fafb;
+    }
+
+    button.action {
+      background: var(--accent);
+      color: var(--white);
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: 0.25s;
+    }
+
+    button.action:hover {
+      background: #1d4ed8;
+    }
+
+    /* ===== LOADER ===== */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255,255,255,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    [data-theme="dark"] #loader {
+      background: rgba(0,0,0,0.8);
+    }
+
+    .spinner {
+      border: 6px solid #ddd;
+      border-top: 6px solid var(--primary);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ===== DARK MODE TOGGLE ===== */
+    .theme-toggle {
+      background: var(--accent);
+      border: none;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      aside {
+        width: 70px;
+      }
+
+      aside h1 { display: none; }
+      .sidebar-nav button { justify-content: center; padding: 12px; }
+      .sidebar-nav button span { display: none; }
+
+      main { margin-left: 80px; padding: 20px; }
+    }
+
+    @media (max-width: 600px) {
+      main { margin-left: 0; padding: 15px; }
+      aside { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="loader"><div class="spinner"></div></div>
+
+  <aside>
+    <h1>🛡️ Admin Panel</h1>
+    <div class="sidebar-nav">
+      <button class="tab-btn active" data-tab="users">👥 <span>Users</span></button>
+      <button class="tab-btn" data-tab="files">📁 <span>Files</span></button>
+      <button class="tab-btn" data-tab="logs">🧾 <span>Logs</span></button>
+    </div>
+    <button id="logoutBtn">Logout</button>
+  </aside>
+
+  <main>
+    <header>
+      <h2 id="section-title">👥 Manage Users</h2>
+      <div class="right-header">
+        <button class="theme-toggle" id="themeToggle">🌙 Dark</button>
+        <div class="admin-info">
+          <img src="https://ui-avatars.com/api/?name=Admin&background=1e3a8a&color=fff&size=32" alt="Admin" style="border-radius:50%;">
+          <span>Admin</span>
+        </div>
+      </div>
+    </header>
+
+    <div id="message"></div>
+
+    <!-- USERS TAB -->
+    <div id="users" class="tab-content active card">
+      <div class="search-bar">
+        <input type="text" placeholder="Search users..." onkeyup="filterTable(this, 'users-table')" />
+      </div>
+      <table id="users-table">
+        <thead>
+          <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- FILES TAB -->
+    <div id="files" class="tab-content card">
+      <div class="search-bar">
+        <input type="text" placeholder="Search files..." onkeyup="filterTable(this, 'files-table')" />
+      </div>
+      <table id="files-table">
+        <thead>
+          <tr>
+            <th>File Name</th>
+            <th>Uploaded By</th>
+            <th>Status</th>
+            <th>Uploaded On</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- LOGS TAB -->
+    <div id="logs" class="tab-content card">
+      <div class="search-bar">
+        <input type="text" placeholder="Search logs..." onkeyup="filterTable(this, 'logs-table')" />
+      </div>
+      <table id="logs-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Action</th>
+            <th>Status</th>
+            <th>Details</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="js/admin.js" defer></script>
+  <script>
+    const loader = document.getElementById("loader");
+    window.addEventListener("load", () => {
+      loader.style.display = "none";
+    });
+
+    const tabButtons = document.querySelectorAll(".tab-btn");
+    const tabContents = document.querySelectorAll(".tab-content");
+    const sectionTitle = document.getElementById("section-title");
+
+    tabButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabButtons.forEach(b => b.classList.remove("active"));
+        tabContents.forEach(c => c.classList.remove("active"));
+        btn.classList.add("active");
+
+        const tabId = btn.dataset.tab;
+        document.getElementById(tabId).classList.add("active");
+        sectionTitle.textContent =
+          tabId === "users" ? "👥 Manage Users" :
+          tabId === "files" ? "📁 Uploaded Files" :
+          "🧾 Activity Logs";
+      });
+    });
+
+    // 🔄 Dark mode toggle
+    const themeToggle = document.getElementById("themeToggle");
+    themeToggle.addEventListener("click", () => {
+      const currentTheme = document.body.getAttribute("data-theme");
+      if (currentTheme === "dark") {
+        document.body.removeAttribute("data-theme");
+        themeToggle.textContent = "🌙 Dark";
+      } else {
+        document.body.setAttribute("data-theme", "dark");
+        themeToggle.textContent = "☀️ Light";
+      }
+    });
+
+    // 🔍 Table filter
+    function filterTable(input, tableId) {
+      const filter = input.value.toLowerCase();
+      const rows = document.querySelectorAll(`#${tableId} tbody tr`);
+      rows.forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(filter) ? "" : "none";
+      });
+    }
+
+    // 🚪 Logout
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+    });
+  </script>
+</body>
+</html>
