@@ -40,25 +40,49 @@ router.post("/database", async (req, res) => {
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     const backupFile = path.join(backupDir, `backup-${timestamp}.sql`);
 
-    // Use environment variables for DB credentials
-    const dbHost = process.env.DB_HOST || "localhost";
-    const dbUser = process.env.DB_USER || "root";
-    const dbPass = process.env.DB_PASS || "";
-    const dbName = process.env.DB_NAME || "backup_system";
+    console.log("🔧 Starting backup process...");
 
-    const dumpCommand = `mysqldump -h ${dbHost} -u ${dbUser} ${dbPass ? `-p${dbPass}` : ""} ${dbName} > "${backupFile}"`;
+    // Use the exact command that worked
+    const dumpCommand = `C:\\xampp\\mysql\\bin\\mysqldump.exe -h localhost -u root kitengela_studio > "${backupFile}"`;
 
-    exec(dumpCommand, (error) => {
+    console.log("Executing command:", dumpCommand);
+
+    exec(dumpCommand, (error, stdout, stderr) => {
       if (error) {
-        console.error("Backup creation failed:", error);
-        return res.status(500).json({ error: "Backup failed." });
+        console.error("❌ Backup failed:", error.message);
+        return res.status(500).json({ 
+          success: false,
+          error: `Backup failed: ${error.message}` 
+        });
       }
 
-      res.json({ message: "✅ Backup created successfully.", file: `backup-${timestamp}.sql` });
+      // Check if file was created
+      setTimeout(() => {
+        if (fs.existsSync(backupFile)) {
+          const stats = fs.statSync(backupFile);
+          console.log("✅ Backup file created! Size:", stats.size, "bytes");
+          
+          res.json({ 
+            success: true,
+            message: "✅ Backup created successfully.", 
+            file: `backup-${timestamp}.sql`
+          });
+        } else {
+          console.error("❌ Backup file was not created");
+          res.status(500).json({ 
+            success: false,
+            error: "Backup file was not created" 
+          });
+        }
+      }, 500);
     });
+
   } catch (err) {
-    console.error("Error creating backup:", err);
-    res.status(500).json({ error: "Failed to create backup." });
+    console.error("❌ Route error:", err);
+    res.status(500).json({ 
+      success: false,
+      error: "Failed to create backup." 
+    });
   }
 });
 

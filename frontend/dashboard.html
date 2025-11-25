@@ -3,273 +3,699 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Dashboard</title>
+  <title>Backup System Dashboard</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <style>
     :root {
-      --bg-color: #f4f6fb;
-      --primary: #4f46e5;
+      --bg-color: #f8fafc;
+      --sidebar-bg: #1e293b;
+      --primary: #3b82f6;
+      --primary-dark: #2563eb;
       --secondary: #6366f1;
-      --text-color: #222;
-      --card-bg: #fff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-color: #1f2937;
+      --text-light: #6b7280;
+      --card-bg: #ffffff;
       --border: #e5e7eb;
       --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     }
 
     [data-theme="dark"] {
-      --bg-color: #111827;
-      --card-bg: #1f2937;
-      --text-color: #f3f4f6;
-      --border: #374151;
+      --bg-color: #0f172a;
+      --sidebar-bg: #1e293b;
+      --text-color: #f1f5f9;
+      --text-light: #94a3b8;
+      --card-bg: #1e293b;
+      --border: #334155;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      margin: 0;
-      font-family: "Poppins", sans-serif;
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
       background: var(--bg-color);
       color: var(--text-color);
       display: flex;
       height: 100vh;
       overflow: hidden;
-      transition: background 0.3s, color 0.3s;
+      transition: all 0.3s ease;
     }
 
+    /* Sidebar */
     .sidebar {
-      width: 230px;
-      background: var(--primary);
-      color: #ffffff25;
+      width: 280px;
+      background: var(--sidebar-bg);
+      color: #e2e8f0;
       display: flex;
       flex-direction: column;
-      padding: 20px;
-      box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-      transition: background 0.3s;
+      padding: 0;
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
     }
 
-    .sidebar h2 {
-      margin-top: 0;
-      text-align: center;
-      font-size: 1.3rem;
-      margin-bottom: 30px;
+    .sidebar-header {
+      padding: 24px;
+      border-bottom: 1px solid #334155;
+      background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
     }
 
-    .sidebar a {
-      color: #fff;
-      text-decoration: none;
-      margin: 12px 0;
+    .sidebar-header h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 10px;
-      border-radius: var(--radius);
-      transition: background 0.3s;
+      gap: 12px;
     }
 
-    .sidebar a:hover {
-      background: rgba(255, 255, 255, 0.2);
+    .sidebar-header h2 i {
+      color: #3b82f6;
+      font-size: 1.75rem;
     }
 
-    .sidebar a.active {
-      background: rgba(255, 255, 255, 0.3);
+    .sidebar-nav {
+      flex: 1;
+      padding: 20px 0;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 24px;
+      color: #cbd5e1;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border-left: 4px solid transparent;
+      margin: 4px 0;
+    }
+
+    .nav-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+      border-left-color: #3b82f6;
+    }
+
+    .nav-item.active {
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
+      border-left-color: #3b82f6;
+    }
+
+    .nav-item i {
+      width: 20px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+
+    .sidebar-footer {
+      padding: 20px;
+      border-top: 1px solid #334155;
     }
 
     .toggle-theme {
-      margin-top: 20px;
-      background: rgba(206, 22, 22, 0.2);
-      border: none;
-      color: #fff;
-      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      padding: 12px 16px;
       border-radius: var(--radius);
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.3s ease;
+      margin-bottom: 12px;
     }
 
     .toggle-theme:hover {
-      background: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
     }
 
     .logout-btn {
-      margin-top: auto;
-      background: #ef4444;
-      text-align: center;
-      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      width: 100%;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      padding: 12px 16px;
       border-radius: var(--radius);
-      color: #fff;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.3s ease;
+      font-weight: 500;
     }
 
     .logout-btn:hover {
-      background: #d91313;
+      background: rgba(239, 68, 68, 0.2);
     }
 
+    /* Main Content */
     .main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      overflow-y: auto;
-      transition: background 0.3s;
+      overflow: hidden;
+      background: var(--bg-color);
     }
 
     .header {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: #fff;
-      padding: 20px 40px;
-      font-size: 1.2rem;
-      font-weight: 500;
-      box-shadow: 0 2px 10px rgba(150, 144, 144, 0.1);
-    }
-
-    .content {
-      padding: 30px 40px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-      gap: 30px;
-    }
-
-    .card {
       background: var(--card-bg);
-      border-radius: var(--radius);
-      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
-      padding: 20px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s;
-      border: 1px solid var(--border);
+      padding: 20px 32px;
+      box-shadow: var(--shadow);
+      border-bottom: 1px solid var(--border);
     }
 
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 18px rgba(166, 17, 17, 0.17);
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .card h3 {
-      margin-top: 0;
-      color: var(--primary);
+    .welcome-text h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .welcome-text p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .user-avatar {
+      width: 48px;
+      height: 48px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
       font-size: 1.1rem;
     }
 
-    #uploadForm {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
+    /* Content Area */
+    .content {
+      flex: 1;
+      padding: 32px;
+      overflow-y: auto;
     }
 
-    input[type="file"] {
-      padding: 10px;
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      padding: 24px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      font-size: 1.5rem;
+    }
+
+    .stat-icon.primary { background: rgba(59, 130, 246, 0.1); color: var(--primary); }
+    .stat-icon.success { background: rgba(16, 185, 129, 0.1); color: var(--success); }
+    .stat-icon.warning { background: rgba(245, 158, 11, 0.1); color: var(--warning); }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-lg);
+    }
+
+    .card-header {
+      padding: 24px 24px 0;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 0;
+    }
+
+    .card-header h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-body {
+      padding: 24px;
+    }
+
+    /* Forms */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .form-control {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-control label {
+      font-weight: 500;
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
+
+    .form-control input,
+    .form-control select {
+      padding: 12px 16px;
       border: 1px solid var(--border);
       border-radius: var(--radius);
       background: var(--card-bg);
       color: var(--text-color);
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
     }
 
-    button {
-      background: var(--primary);
-      color: #fff;
+    .form-control input:focus,
+    .form-control select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
       border: none;
-      padding: 10px 14px;
       border-radius: var(--radius);
+      font-weight: 500;
+      font-size: 0.95rem;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
+      text-decoration: none;
     }
 
-    button:hover {
-      background: var(--secondary);
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .btn-success {
+      background: var(--success);
+      color: white;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-color);
+    }
+
+    .btn-outline:hover {
+      background: var(--bg-color);
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      border-radius: var(--radius);
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 10px;
-      font-size: 0.95rem;
-    }
-
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid var(--border);
-      text-align: left;
+      font-size: 0.9rem;
     }
 
     th {
-      background: rgba(99, 102, 241, 0.08);
+      background: rgba(59, 130, 246, 0.05);
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
       color: var(--text-color);
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
     }
 
     tr:hover {
-      background: rgba(99, 102, 241, 0.05);
+      background: rgba(59, 130, 246, 0.02);
+    }
+
+    /* File upload area */
+    .upload-area {
+      border: 2px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 40px;
+      text-align: center;
+      transition: all 0.3s ease;
+      margin-bottom: 20px;
+    }
+
+    .upload-area:hover {
+      border-color: var(--primary);
+      background: rgba(59, 130, 246, 0.02);
+    }
+
+    .upload-area i {
+      font-size: 3rem;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar {
+        width: 80px;
+      }
+      .sidebar-header h2 span,
+      .nav-item span,
+      .toggle-theme span,
+      .logout-btn span {
+        display: none;
+      }
+      .sidebar-header {
+        padding: 20px;
+      }
+      .nav-item {
+        justify-content: center;
+        padding: 16px;
+      }
     }
 
     @media (max-width: 768px) {
-      .sidebar {
-        width: 60px;
-        padding: 15px 10px;
+      .form-row {
+        grid-template-columns: 1fr;
       }
-      .sidebar h2, .sidebar a span {
-        display: none;
+      .stats-grid {
+        grid-template-columns: 1fr;
       }
-      .content {
-        padding: 20px;
+      .header-content {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .user-info {
+        align-self: flex-end;
       }
     }
   </style>
 </head>
 <body>
+  <!-- Sidebar -->
   <div class="sidebar">
-    <h2><i class="fa-solid fa-database"></i> MyPanel</h2>
-    <a href="#" class="active"><i class="fa-solid fa-cloud-arrow-up"></i> <span>Uploads</span></a>
-    <a href="#"><i class="fa-solid fa-rotate"></i> <span>Backups</span></a>
-    <a href="#"><i class="fa-solid fa-gear"></i> <span>Settings</span></a>
-
-    <button id="themeToggle" class="toggle-theme">
-      <i class="fa-solid fa-moon"></i> <span>Dark Mode</span>
-    </button>
-
-    <div id="logoutBtn" class="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</div>
-  </div>
-
-  <div class="main" id="mainContent">
-    <div class="header">
-      Welcome, <span id="username">User</span> 👋
+    <div class="sidebar-header">
+      <h2>
+        <i class="fa-solid fa-database"></i>
+        <span>BackupSystem</span>
+      </h2>
+    </div>
+    
+    <div class="sidebar-nav">
+      <a href="#" class="nav-item active" data-section="uploads">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <span>File Uploads</span>
+      </a>
+      <a href="#" class="nav-item" data-section="backups">
+        <i class="fa-solid fa-database"></i>
+        <span>Backup Manager</span>
+      </a>
+      <a href="#" class="nav-item" data-section="settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </a>
     </div>
 
+    <div class="sidebar-footer">
+      <button id="themeToggle" class="toggle-theme">
+        <i class="fa-solid fa-moon"></i>
+        <span>Dark Mode</span>
+      </button>
+      <button id="logoutBtn" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        <span>Logout</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-content">
+        <div class="welcome-text">
+          <h1>Welcome back, <span id="username">User</span>! 👋</h1>
+          <p>Here's what's happening with your backup system today.</p>
+        </div>
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar">U</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
     <div class="content">
+      <!-- Stats Grid -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon primary">
+            <i class="fa-solid fa-file"></i>
+          </div>
+          <div class="stat-value" id="fileCount">0</div>
+          <div class="stat-label">Total Files</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon success">
+            <i class="fa-solid fa-database"></i>
+          </div>
+          <div class="stat-value" id="backupCount">0</div>
+          <div class="stat-label">Backups Created</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon warning">
+            <i class="fa-solid fa-hard-drive"></i>
+          </div>
+          <div class="stat-value" id="storageUsed">0 MB</div>
+          <div class="stat-label">Storage Used</div>
+        </div>
+      </div>
+
       <!-- Uploads Section -->
       <div class="section" id="uploadsSection">
         <div class="card">
-          <h3><i class="fa-solid fa-upload"></i> Upload Files</h3>
-          <form id="uploadForm" enctype="multipart/form-data">
-            <input type="file" id="fileInput" name="file" required />
-            <button type="submit"><i class="fa-solid fa-cloud-arrow-up"></i> Upload</button>
-          </form>
-          <table id="fileTable">
-            <thead>
-              <tr>
-                <th>Filename</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <div class="card-header">
+            <h3><i class="fa-solid fa-cloud-arrow-up"></i> Upload New Files</h3>
+          </div>
+          <div class="card-body">
+            <div class="upload-area" id="dropZone">
+              <i class="fa-solid fa-cloud-arrow-up"></i>
+              <h4>Drag & Drop your files here</h4>
+              <p>or click to browse</p>
+              <input type="file" id="fileInput" style="display: none;" multiple />
+            </div>
+            <form id="uploadForm" enctype="multipart/form-data">
+              <div class="form-row">
+                <div class="form-control" style="grid-column: 1 / -1;">
+                  <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-upload"></i> Upload Selected Files
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-files"></i> Recent Uploads</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table id="fileTable">
+                <thead>
+                  <tr>
+                    <th>Filename</th>
+                    <th>Size</th>
+                    <th>Upload Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Backups Section -->
       <div class="section" id="backupsSection" style="display: none;">
         <div class="card">
-          <h3><i class="fa-solid fa-database"></i> Backup Manager</h3>
-          <button id="backupBtn"><i class="fa-solid fa-rotate"></i> Create Backup</button>
-          <table id="backupTable">
-            <thead>
-              <tr>
-                <th>Backup Name</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
+          <div class="card-header">
+            <h3><i class="fa-solid fa-database"></i> Backup Management</h3>
+          </div>
+          <div class="card-body">
+            <div class="form-row">
+              <div class="form-control">
+                <button id="backupBtn" class="btn btn-primary">
+                  <i class="fa-solid fa-rotate"></i> Create New Backup
+                </button>
+              </div>
+              <div class="form-control">
+                <button class="btn btn-outline">
+                  <i class="fa-solid fa-clock"></i> Schedule Backup
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-history"></i> Backup History</h3>
+          </div>
+          <div class="card-body">
+            <div class="table-container">
+              <table id="backupTable">
+                <thead>
+                  <tr>
+                    <th>Backup Name</th>
+                    <th>Size</th>
+                    <th>Date Created</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
 
       <!-- Settings Section -->
       <div class="section" id="settingsSection" style="display: none;">
         <div class="card">
-          <h3><i class="fa-solid fa-gear"></i> Settings</h3>
-          <p>Here you can configure your account or system preferences later.</p>
+          <div class="card-header">
+            <h3><i class="fa-solid fa-user"></i> Profile Settings</h3>
+          </div>
+          <div class="card-body">
+            <form id="profileForm">
+              <div class="form-row">
+                <div class="form-control">
+                  <label for="profileName">Full Name</label>
+                  <input type="text" id="profileName" placeholder="Your full name">
+                </div>
+                <div class="form-control">
+                  <label for="profileEmail">Email Address</label>
+                  <input type="email" id="profileEmail" placeholder="Your email">
+                </div>
+              </div>
+              <div class="form-control">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fa-solid fa-save"></i> Update Profile
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-lock"></i> Security</h3>
+          </div>
+          <div class="card-body">
+            <form id="passwordForm">
+              <div class="form-row">
+                <div class="form-control">
+                  <label for="currentPassword">Current Password</label>
+                  <input type="password" id="currentPassword" placeholder="Current password">
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-control">
+                  <label for="newPassword">New Password</label>
+                  <input type="password" id="newPassword" placeholder="New password">
+                </div>
+                <div class="form-control">
+                  <label for="confirmPassword">Confirm New Password</label>
+                  <input type="password" id="confirmPassword" placeholder="Confirm new password">
+                </div>
+              </div>
+              <div class="form-control">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fa-solid fa-key"></i> Change Password
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>
@@ -277,62 +703,199 @@
 
   <script src="js/dashboard.js"></script>
   <script>
-    // Dark mode toggle logic
-    const themeToggle = document.getElementById("themeToggle");
-    const html = document.documentElement;
-    const savedTheme = localStorage.getItem("theme");
-
-    if (savedTheme) {
-      html.setAttribute("data-theme", savedTheme);
-      updateIcon(savedTheme);
-    } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
-      html.setAttribute("data-theme", "dark");
-      updateIcon("dark");
-    }
-
-    themeToggle.addEventListener("click", () => {
-      const currentTheme = html.getAttribute("data-theme");
-      const newTheme = currentTheme === "dark" ? "light" : "dark";
-      html.setAttribute("data-theme", newTheme);
-      localStorage.setItem("theme", newTheme);
-      updateIcon(newTheme);
+    // Enhanced JavaScript for the improved UI
+    document.addEventListener('DOMContentLoaded', function() {
+      // Initialize the dashboard
+      initializeDashboard();
+      
+      // Set up event listeners
+      setupEventListeners();
+      
+      // Load initial data
+      loadDashboardData();
     });
 
-    function updateIcon(theme) {
-      const icon = themeToggle.querySelector("i");
-      const text = themeToggle.querySelector("span");
-      if (theme === "dark") {
-        icon.className = "fa-solid fa-sun";
-        text.textContent = "Light Mode";
-      } else {
-        icon.className = "fa-solid fa-moon";
-        text.textContent = "Dark Mode";
+    function initializeDashboard() {
+      // Set user avatar based on name
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const displayName = getUserDisplayName(user);
+      document.getElementById('username').textContent = displayName;
+      
+      // Set avatar initial
+      if (displayName !== 'User') {
+        document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
+      }
+      
+      // Populate profile form
+      if (user.full_name) {
+        document.getElementById('profileName').value = user.full_name;
+      }
+      if (user.email) {
+        document.getElementById('profileEmail').value = user.email;
       }
     }
 
-    // Sidebar section toggle
-    const sidebarLinks = document.querySelectorAll(".sidebar a");
-    const sections = document.querySelectorAll(".section");
-
-    sidebarLinks.forEach((link, index) => {
-      link.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Hide all sections
-        sections.forEach((section) => (section.style.display = "none"));
-
-        // Remove active from all links
-        sidebarLinks.forEach((l) => l.classList.remove("active"));
-
-        // Show selected section
-        if (index === 0) document.getElementById("uploadsSection").style.display = "block";
-        if (index === 1) document.getElementById("backupsSection").style.display = "block";
-        if (index === 2) document.getElementById("settingsSection").style.display = "block";
-
-        // Add active class
-        link.classList.add("active");
+    function setupEventListeners() {
+      // Navigation
+      document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+          e.preventDefault();
+          const section = this.getAttribute('data-section');
+          switchSection(section);
+          
+          // Update active state
+          document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+          this.classList.add('active');
+        });
       });
-    });
+
+      // File upload drop zone
+      const dropZone = document.getElementById('dropZone');
+      const fileInput = document.getElementById('fileInput');
+
+      dropZone.addEventListener('click', () => fileInput.click());
+      
+      dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--primary)';
+        dropZone.style.background = 'rgba(59, 130, 246, 0.05)';
+      });
+
+      dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = 'var(--border)';
+        dropZone.style.background = 'transparent';
+      });
+
+      dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'var(--border)';
+        dropZone.style.background = 'transparent';
+        
+        if (e.dataTransfer.files.length) {
+          fileInput.files = e.dataTransfer.files;
+          // Trigger upload
+          document.getElementById('uploadForm').dispatchEvent(new Event('submit'));
+        }
+      });
+
+      // Theme toggle
+      const themeToggle = document.getElementById('themeToggle');
+      const html = document.documentElement;
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      
+      html.setAttribute('data-theme', savedTheme);
+      updateThemeIcon(savedTheme);
+
+      themeToggle.addEventListener('click', () => {
+        const currentTheme = html.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        updateThemeIcon(newTheme);
+      });
+
+      // Forms
+      document.getElementById('profileForm')?.addEventListener('submit', handleProfileUpdate);
+      document.getElementById('passwordForm')?.addEventListener('submit', handlePasswordChange);
+      document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+    }
+
+    function switchSection(section) {
+      // Hide all sections
+      document.querySelectorAll('.section').forEach(sec => {
+        sec.style.display = 'none';
+      });
+      
+      // Show selected section
+      document.getElementById(section + 'Section').style.display = 'block';
+    }
+
+    function updateThemeIcon(theme) {
+      const icon = document.querySelector('#themeToggle i');
+      const text = document.querySelector('#themeToggle span');
+      
+      if (theme === 'dark') {
+        icon.className = 'fa-solid fa-sun';
+        text.textContent = 'Light Mode';
+      } else {
+        icon.className = 'fa-solid fa-moon';
+        text.textContent = 'Dark Mode';
+      }
+    }
+
+    function getUserDisplayName(user) {
+      if (user.full_name && user.full_name.trim() !== '') {
+        return user.full_name;
+      }
+      
+      if (user.email) {
+        const emailParts = user.email.split('@')[0];
+        const nameParts = emailParts.split(/[._]/);
+        const capitalizedName = nameParts.map(part => 
+          part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+        ).join(' ');
+        return capitalizedName;
+      }
+      
+      return 'User';
+    }
+
+    function handleProfileUpdate(e) {
+      e.preventDefault();
+      const name = document.getElementById('profileName').value;
+      const email = document.getElementById('profileEmail').value;
+      
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      user.full_name = name;
+      user.email = email;
+      localStorage.setItem('user', JSON.stringify(user));
+      
+      const displayName = getUserDisplayName(user);
+      document.getElementById('username').textContent = displayName;
+      document.getElementById('userAvatar').textContent = displayName.charAt(0).toUpperCase();
+      
+      showNotification('Profile updated successfully!', 'success');
+    }
+
+    function handlePasswordChange(e) {
+      e.preventDefault();
+      const currentPass = document.getElementById('currentPassword').value;
+      const newPass = document.getElementById('newPassword').value;
+      const confirmPass = document.getElementById('confirmPassword').value;
+      
+      if (newPass !== confirmPass) {
+        showNotification('New passwords do not match!', 'error');
+        return;
+      }
+      
+      if (newPass.length < 6) {
+        showNotification('Password must be at least 6 characters long!', 'error');
+        return;
+      }
+      
+      showNotification('Password change request sent!', 'success');
+      document.getElementById('passwordForm').reset();
+    }
+
+    function handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/login';
+    }
+
+    function loadDashboardData() {
+      // Simulate loading data
+      setTimeout(() => {
+        document.getElementById('fileCount').textContent = '12';
+        document.getElementById('backupCount').textContent = '8';
+        document.getElementById('storageUsed').textContent = '156 MB';
+      }, 1000);
+    }
+
+    function showNotification(message, type = 'info') {
+      // Simple notification implementation
+      alert(message); // Replace with a proper notification system
+    }
   </script>
 </body>
 </html>
