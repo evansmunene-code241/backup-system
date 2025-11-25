@@ -3,17 +3,95 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<link rel="stylesheet" href="css/styles.css" />
-<title>Welcome</title>
+<title>Backup System</title>
+<style>
+  /* ===== Reset ===== */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  /* ===== Full-screen Background ===== */
+  body {
+    background: url(frontend\bacground.jpeg) no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #ede9e9;
+    position: relative;
+  }
+
+ /* ===== Overlay for readability ===== */
+.overlay {
+  position: absolute;
+  margin: auto;
+  padding: 365px;
+  width: 1500px;
+  background: rgba(201, 181, 181, 0.5) url('mantion.png') no-repeat center center;
+  background-size: cover;
+  
+}
+
+  /* ===== Centered Content ===== */
+  .container {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    max-width: 600px;
+    padding: 50px 40px;
+    border-radius: 15px;
+    background: rgba(14, 13, 15, 0.845);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+  }
+
+  /* ===== Buttons ===== */
+  .btn {
+    display: inline-block;
+    background: #1b0ab6;
+    color: #f8f8fbff;
+    font-weight: bold;
+    padding: 12px 25px;
+    margin: 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: 0.3s;
+  }
+
+  .btn:hover {
+    background: S#ffffff;
+    color: #1e8a47;
+    transform: translateY(-3px);
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 600px) {
+    h1 { font-size: 2rem; }
+    p { font-size: 1rem; }
+    .container { padding: 30px 20px; }
+    ;
+  }
+</style>
 </head>
 <body>
-<div class="container center">
-<h1>Backup System</h1>
-<p>Welcome to the secure backup and file management system.</p>
-<div class="actions">
-<a href="login.html" class="btn">Login</a>
-<a href="register.html" class="btn secondary">Register</a>
-</div>
-</div>
+  <div class="overlay"></div>
+  <div class="container">
+    <h1>Backup System</h1>
+    <p>Securely store and manage your files with automatic backups.</p>
+    <a href="login.html" class="btn">Login</a>
+    <a href="register.html" class="btn">Register</a>
+  </div>
 </body>
 </html>
